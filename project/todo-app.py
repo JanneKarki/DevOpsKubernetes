@@ -5,8 +5,18 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Server started in port " + os.getenv("PORT", "5000")
+    return """
+            <html>
+                <head>
+                    <title>Todo-App-Server</title>
+                </head>
+                <body>
+                    <h1> Hello </h1>
+                </body>
+            </html>
+            """
+
 
 if __name__ == '__main__':
-    port = int(os.getenv("PORT", 5000))
+    port = int(os.getenv("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
