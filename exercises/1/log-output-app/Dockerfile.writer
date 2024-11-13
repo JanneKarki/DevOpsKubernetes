@@ -1,0 +1,7 @@
+FROM python:3.9-slim
+
+WORKDIR /usr/src/app
+
+COPY log-writer.py .
+
+CMD ["python", "log-writer.py"]
