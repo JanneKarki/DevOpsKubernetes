@@ -1,4 +1,4 @@
-from flask import Flask, send_file
+from flask import Flask, send_file, request
 import os
 import requests
 from datetime import datetime, timedelta
@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 image_path = "/usr/src/app/files/hourly_image.jpg"
 update_interval = timedelta(hours=1)
+todos = ["TODO 1", "TODO 2"]
 
 def download_image():
     response = requests.get("https://picsum.photos/1200")
@@ -20,17 +21,31 @@ def check_image_update():
     else:
         download_image()
 
-@app.route('/todo')
+@app.route('/todo', methods=['GET', 'POST'])
 def home():
+    if request.method == 'POST':
+        new_todo = request.form.get('todo')
+        if new_todo:
+            todos.append(new_todo)
+    
     check_image_update()
+    todo_list_html = ''.join(f"<li>{todo}</li>" for todo in todos)
+    
     return f"""
             <html>
                 <head>
                     <title>Todo-App-Server</title>
                 </head>
                 <body>
-                    <h1>Hello</h1>
+                    <h1>Todo App</h1>
                     <img src="/todo/image" alt="Random Image">
+                    <form method="POST">
+                        <input type="text" name="todo" maxlength="140">
+                        <button type="submit">Create TODO</button>
+                    </form>
+                    <ul>
+                        {todo_list_html}
+                    </ul>
                 </body>
             </html>
             """
