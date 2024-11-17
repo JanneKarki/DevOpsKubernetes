@@ -12,9 +12,16 @@ spec:
       labels:
         app: pingpong
     spec:
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-pvc
       containers:
-      - name: pingpong
-        image: pingpong:latest
-        ports:
-        - containerPort: 8080
-        imagePullPolicy: IfNotPresent
+        - name: pingpong
+          image: pingpong:latest
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /usr/src/app/files
+          imagePullPolicy: Never 
+          ports:
+            - containerPort: 8080
