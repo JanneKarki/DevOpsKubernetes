@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY log-reader.py .
 
-RUN pip install flask
+RUN pip install flask requests
 
 CMD ["python", "log-reader.py"]
 
