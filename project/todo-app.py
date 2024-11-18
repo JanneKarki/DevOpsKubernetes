@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 image_path = "/usr/src/app/files/hourly_image.jpg"
 update_interval = timedelta(hours=1)
-todos = ["TODO 1", "TODO 2"]
+backend_service_url = "http://todo-backend-svc/todos"
 
 def download_image():
     response = requests.get("https://picsum.photos/1200")
@@ -26,7 +26,9 @@ def home():
     if request.method == 'POST':
         new_todo = request.form.get('todo')
         if new_todo:
-            todos.append(new_todo)
+            response = requests.post(backend_service_url, json={"todo": new_todo})
+    response = requests.get(backend_service_url)
+    todos = response.json()
     
     check_image_update()
     todo_list_html = ''.join(f"<li>{todo}</li>" for todo in todos)
