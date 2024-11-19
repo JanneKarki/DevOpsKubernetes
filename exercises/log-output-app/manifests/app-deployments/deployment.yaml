@@ -17,6 +17,9 @@ spec:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-pvc
+        - name: config-volume
+          configMap:
+            name: log-output-config
       containers:
         - name: log-writer
           image: log-writer:latest
@@ -30,3 +33,12 @@ spec:
           volumeMounts:
             - name: shared-storage
               mountPath: /usr/src/app/files
+            - name: config-volume
+              mountPath: /usr/src/app/config/information.txt
+              subPath: information.txt
+          env:
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: log-output-config
+                  key: MESSAGE
