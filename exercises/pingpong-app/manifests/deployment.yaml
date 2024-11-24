@@ -13,16 +13,20 @@ spec:
       labels:
         app: pingpong
     spec:
-      volumes:
-        - name: shared-storage
-          persistentVolumeClaim:
-            claimName: shared-pvc
       containers:
         - name: pingpong
           image: pingpong:latest
-          volumeMounts:
-            - name: shared-storage
-              mountPath: /usr/src/app/files
-          imagePullPolicy: Never 
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: "postgres-svc"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "pingpongdb"
+            - name: DB_USER
+              value: "user"
+            - name: DB_PASSWORD
+              value: "password"
