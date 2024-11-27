@@ -16,6 +16,32 @@ spec:
       containers:
       - name: todo-backend
         image: todo-backend:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
-        imagePullPolicy: Never
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: password

@@ -19,10 +19,16 @@ spec:
             claimName: todo-app-pvc
       containers:
       - name: todo-app
-        image: todo-app:1.1
+        image: todo-app:1.2
         ports:
         - containerPort: 8081
         imagePullPolicy: Never
         volumeMounts:
           - name: todo-app-volume
             mountPath: /usr/src/app/files
+        env:
+          - name: BACKEND_SERVICE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: BACKEND_SERVICE_URL

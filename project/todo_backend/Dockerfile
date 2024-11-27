@@ -4,6 +4,6 @@ WORKDIR /usr/src/app
 
 COPY todo-backend.py .
 
-RUN pip install flask requests
+RUN pip install flask requests psycopg2-binary
 
 CMD ["python", "todo-backend.py"]

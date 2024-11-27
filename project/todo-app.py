@@ -6,7 +6,8 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 image_path = "/usr/src/app/files/hourly_image.jpg"
 update_interval = timedelta(hours=1)
-backend_service_url = "http://todo-backend-svc/todos"
+backend_service_url = os.getenv("BACKEND_SERVICE_URL")
+
 
 def download_image():
     response = requests.get("https://picsum.photos/1200")
