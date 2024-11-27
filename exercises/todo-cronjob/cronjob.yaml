@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: read-todo
+  namespace: exercises-namespace
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: todo
+            image: todo-cron:latest
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
