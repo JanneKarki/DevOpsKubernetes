@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: pingpong
-          image: pingpong:latest
-          imagePullPolicy: Never
+          image: jannekarki/pingpong-app:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
