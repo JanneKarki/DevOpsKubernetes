@@ -13,15 +13,19 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 
 def get_db_connection():
-    connection = psycopg2.connect(
-        host=DB_HOST,
-        port=DB_PORT,
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD
-    )
-    print(connection)
-    return connection
+    try:
+        connection = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD
+        )
+        print(connection)
+        return connection
+    except Exception as e:
+        print(f"Error connecting to the database: {e}")
+        raise
 
 def initialize_database():
     conn = get_db_connection()
@@ -34,6 +38,11 @@ def initialize_database():
         """)
         conn.commit()
     conn.close()
+
+
+@app.route('/', methods=['GET'])
+def home():
+    return "Pingpong is running", 200
 
 @app.route('/pingpong', methods=['GET'])
 def ping_pong():
@@ -56,7 +65,7 @@ def ping_pong():
     conn.close()
     if result:
         return str(result[0])
-    return 
+    return  200
 
 if __name__ == '__main__':
     initialize_database()

@@ -26,6 +26,13 @@ spec:
               value: user
             - name: POSTGRES_PASSWORD
               value: password
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "100m"
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
@@ -34,7 +41,8 @@ spec:
     - metadata:
         name: postgres-data
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 1Gi

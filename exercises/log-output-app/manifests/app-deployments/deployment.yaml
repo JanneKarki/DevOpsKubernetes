@@ -22,14 +22,14 @@ spec:
             name: log-output-config
       containers:
         - name: log-writer
-          image: log-writer:latest
-          imagePullPolicy: IfNotPresent
+          image: jannekarki/log-writer:latest
+          imagePullPolicy: Always
           volumeMounts:
             - name: shared-storage
               mountPath: /usr/src/app/files
         - name: log-reader
-          image: log-reader:latest
-          imagePullPolicy: IfNotPresent
+          image: jannekarki/log-reader:latest
+          imagePullPolicy: Always
           volumeMounts:
             - name: shared-storage
               mountPath: /usr/src/app/files
