@@ -23,13 +23,15 @@ jobs:
         uses: actions/checkout@v4
 
       # Set secrets
-      - name: Install SOPS and Age
+      - name: Install SOPS
         run: |
           sudo apt-get update
-          sudo apt-get install -y age
-          curl -Lo sops.deb https://github.com/getsops/sops/releases/latest/download/sops_$(uname -m).deb
-          sudo dpkg -i sops.deb
-          rm sops.deb
+          sudo apt-get install -y wget
+          wget https://github.com/getsops/sops/releases/latest/download/sops-linux-amd64 -O sops
+          chmod +x sops
+          sudo mv sops /usr/local/bin/
+          sops --version
+
 
       - name: Configure SOPS
         run: |
