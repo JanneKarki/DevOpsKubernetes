@@ -1,0 +1,75 @@
+name: Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  IMAGE: todo-app
+  BACKEND_IMAGE: todo-backend
+  BRANCH: ${{ github.ref_name }}
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+
+jobs:
+  build-publish-deploy:
+    name: Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Docker Hub login
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      # Build and push todo-app image
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t $DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA ./path/to/frontend
+          docker push $DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
+
+      # Build and push todo-backend image
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t $DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA ./path/to/backend
+          docker push $DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA
+
+      # Google Cloud auth
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      # Set up Google Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Get GKE credentials
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      # Asenna Kustomize
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      # Update Kustomize images and deploy 
+      - name: Deploy to GKE
+        run: |
+          kustomize edit set image todo-app=$DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
+          kustomize edit set image todo-backend=$DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA
+          kustomize build ./path/to/kustomization | kubectl apply -f -
+          kubectl rollout status deployment todo-app-dep
+          kubectl rollout status deployment todo-backend-dep
+          kubectl get services -o wide
