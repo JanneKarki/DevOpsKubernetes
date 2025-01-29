@@ -33,14 +33,16 @@ jobs:
       # Build and push todo-app image
       - name: Build and Push Frontend Image
         run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -f ./project/Dockerfile ./project
-          docker push $DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
+          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-app:latest -f ./project/Dockerfile ./project
+          docker push $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA
+          docker push $DOCKER_HUB_USERNAME/todo-app:latest
 
       # Build and push todo-backend image
       - name: Build and Push Backend Image
         run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA ./project/todo_backend
-          docker push $DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA
+          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-backend:latest -f ./project/todo_backend/Dockerfile ./project/todo_backend
+          docker push $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA
+          docker push $DOCKER_HUB_USERNAME/todo-backend:latest
 
       # Google Cloud auth
       - name: Authenticate to Google Cloud
