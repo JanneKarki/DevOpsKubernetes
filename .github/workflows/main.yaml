@@ -33,13 +33,13 @@ jobs:
       # Build and push todo-app image
       - name: Build and Push Frontend Image
         run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -f ./Dockerfile .
+          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -f ./project/Dockerfile .
           docker push $DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
 
       # Build and push todo-backend image
       - name: Build and Push Backend Image
         run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA ./todo_backend
+          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA ./project/todo_backend
           docker push $DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA
 
       # Google Cloud auth
@@ -69,7 +69,7 @@ jobs:
         run: |
           kustomize edit set image todo-app=$DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize edit set image todo-backend=$DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA
-          kustomize build ./manifests | kubectl apply -f -
+          kustomize build ./project/manifests | kubectl apply -f -
           kubectl rollout status deployment todo-app-dep
           kubectl rollout status deployment todo-backend-dep
           kubectl get services -o wide
