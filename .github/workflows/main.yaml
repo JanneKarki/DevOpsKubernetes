@@ -67,9 +67,10 @@ jobs:
       # Update Kustomize images and deploy 
       - name: Deploy to GKE
         run: |
+          cd project/manifests
           kustomize edit set image todo-app=$DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize edit set image todo-backend=$DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA
-          kustomize build ./project/manifests | kubectl apply -f -
+          kustomize build . | kubectl apply -f -
           kubectl rollout status deployment todo-app-dep
           kubectl rollout status deployment todo-backend-dep
           kubectl get services -o wide
