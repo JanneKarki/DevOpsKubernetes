@@ -26,7 +26,7 @@ def check_image_update():
 
 @app.route('/', methods=['GET'])
 def home():
-    return "Todo App running!!", 200
+    return "Todo App running!", 200
 
 @app.route('/todo', methods=['GET', 'POST'])
 def todo():
@@ -35,7 +35,7 @@ def todo():
         if new_todo:
             response = requests.post(backend_service_url, json={"todo": new_todo})
             if response.status_code == 201:
-                logging.info("Todo successfully sent to backend: %s", new_todo)
+                logging.info("Todo successfully sent to backend!: %s", new_todo)
             else:
                 logging.error("Failed to create todo: %s | Backend response: %s", new_todo, response.json())
                 
