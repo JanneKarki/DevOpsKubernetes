@@ -24,8 +24,12 @@ def check_image_update():
     else:
         download_image()
 
-@app.route('/todo', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def home():
+    return "Todo App running", 200
+
+@app.route('/todo', methods=['GET', 'POST'])
+def todo():
     if request.method == 'POST':
         new_todo = request.form.get('todo')
         if new_todo:
