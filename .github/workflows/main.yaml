@@ -2,8 +2,7 @@ name: Deploy to GKE
 
 on:
   push:
-    branches:
-      - main
+
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
@@ -23,24 +22,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Set secrets
+      - name: Install SOPS and Age
+        run: sudo apt-get install -y sops age
+
+      - name: Configure SOPS
+        run: |
+          mkdir -p ~/.config/sops/age
+          echo "${{ secrets.SOPS_AGE_KEY }}" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
+
+      - name: Decrypt secrets
+        run: |
+          sops --decrypt project/manifests/backend_manifests/secrets.enc.yaml > project/manifests/backend_manifests/secrets.yaml
+
+
       # Docker Hub login
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      # Build and push todo-app image
-      - name: Build and Push Frontend Image
-        run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-app:latest -f ./project/Dockerfile ./project
-          docker push $DOCKER_HUB_USERNAME/todo-app:latest
-
-      # Build and push todo-backend image
-      - name: Build and Push Backend Image
-        run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-backend:latest -f ./project/todo_backend/Dockerfile ./project/todo_backend
-          docker push $DOCKER_HUB_USERNAME/todo-backend:latest
 
       # Google Cloud auth
       - name: Authenticate to Google Cloud
@@ -60,6 +62,32 @@ jobs:
           project_id: '${{ env.PROJECT_ID }}'
           location: '${{ env.GKE_ZONE }}'
 
+      # Set Namespace by branch
+      - name: Set Namespace
+        run: |
+          if [[ "$BRANCH" == "main" ]]; then
+            echo "NAMESPACE=project-namespace" >> $GITHUB_ENV
+          else
+            echo "NAMESPACE=${BRANCH}" >> $GITHUB_ENV
+          fi
+
+      - name: Create Namespace (if not exists)
+        run: |
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
+
+       # Build and push todo-app image
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-app:latest -f ./project/Dockerfile ./project
+          docker push $DOCKER_HUB_USERNAME/todo-app:latest
+
+      # Build and push todo-backend image
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-backend:latest -f ./project/todo_backend/Dockerfile ./project/todo_backend
+          docker push $DOCKER_HUB_USERNAME/todo-backend:latest
+
       # Kustomize
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v2.1.0
@@ -68,7 +96,11 @@ jobs:
       - name: Deploy to GKE
         run: |
           cd project/manifests
+          NAMESPACE=${GITHUB_REF#refs/heads/}
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
+          kustomize edit set namespace $NAMESPACE
           kustomize build . | kubectl apply -f -
-          kubectl rollout restart deployment todo-app-dep -n project-namespace
-          kubectl rollout restart deployment todo-backend-dep -n project-namespace
-          kubectl get pods -n project-namespace
+          kubectl rollout restart deployment todo-app-dep -n $NAMESPACE
+          kubectl rollout restart deployment todo-backend-dep -n $NAMESPACE
+          kubectl get services -o wide -n $NAMESPACE
