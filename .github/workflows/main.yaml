@@ -24,7 +24,12 @@ jobs:
 
       # Set secrets
       - name: Install SOPS and Age
-        run: sudo apt-get install -y sops age
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y age
+          curl -Lo sops.deb https://github.com/getsops/sops/releases/latest/download/sops_$(uname -m).deb
+          sudo dpkg -i sops.deb
+          rm sops.deb
 
       - name: Configure SOPS
         run: |
