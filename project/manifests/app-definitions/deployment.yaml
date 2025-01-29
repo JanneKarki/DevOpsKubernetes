@@ -19,7 +19,7 @@ spec:
             claimName: todo-app-pvc
       containers:
       - name: todo-app
-        image: jannekarki/todo-app:1.4
+        image: jannekarki/todo-app:latest
         ports:
         - containerPort: 8081
         imagePullPolicy: Always
