@@ -40,7 +40,7 @@ jobs:
       # Build and push todo-backend image
       - name: Build and Push Backend Image
         run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-backend:latest -f ./project/todo_backend/Dockerfile ./project/todo_backend
+          docker build -t $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA -t $DOCKER_HUB_USERNAME/todo-backend:latest -f ./project/todo_backend/ .
           docker push $DOCKER_HUB_USERNAME/todo-backend:$BRANCH-$GITHUB_SHA
           docker push $DOCKER_HUB_USERNAME/todo-backend:latest
 
