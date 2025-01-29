@@ -10,7 +10,6 @@ resources:
   - backend_manifests/ingress.yaml
   - backend_manifests/postgres_service.yaml
   - backend_manifests/postgres_statefulset.yaml
-  - backend_manifests/secrets/secrets.yaml
   - backend_manifests/configmap.yaml
 
 images:
