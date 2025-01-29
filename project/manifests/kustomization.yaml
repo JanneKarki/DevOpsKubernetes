@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - app-definitions/deployment.yaml
+  - app-definitions/service.yaml
+  - app-definitions/ingress.yaml
+  - pv-definitions/persistentvolumeclaim.yaml
+  - backend_manifests/deployment.yaml
+  - backend_manifests/service.yaml
+  - backend_manifests/ingress.yaml
+  - backend_manifests/postgres_service.yaml
+  - backend_manifests/postgres_statefulset.yaml
+  - backend_manifests/secrets/secrets.yaml
+  - backend_manifests/configmap.yaml
+
+images:
+  - name: jannekarki/todo-backend
+    newName: jannekarki/todo-backend
+    newTag: "latest"
+  - name: jannekarki/todo-app
+    newName: jannekarki/todo-app
+    newTag: "1.4"
