@@ -71,6 +71,6 @@ jobs:
           kustomize edit set image todo-app=$DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize edit set image todo-backend=$DOCKER_HUB_USERNAME/$BACKEND_IMAGE:$BRANCH-$GITHUB_SHA
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment todo-app-dep
-          kubectl rollout status deployment todo-backend-dep
+          kubectl rollout status deployment todo-app-dep -n project-namespace
+          kubectl rollout status deployment todo-backend-dep -n project-namespace
           kubectl get services -o wide
