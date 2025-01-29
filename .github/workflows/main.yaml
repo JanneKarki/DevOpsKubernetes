@@ -33,7 +33,7 @@ jobs:
       # Build and push todo-app image
       - name: Build and Push Frontend Image
         run: |
-          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -f ./project/Dockerfile .
+          docker build -t $DOCKER_HUB_USERNAME/todo-app:$BRANCH-$GITHUB_SHA -f ./project/Dockerfile ./project
           docker push $DOCKER_HUB_USERNAME/$IMAGE:$BRANCH-$GITHUB_SHA
 
       # Build and push todo-backend image
