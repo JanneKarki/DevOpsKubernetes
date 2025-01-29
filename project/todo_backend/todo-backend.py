@@ -56,7 +56,7 @@ def create_todo():
             cur.execute("INSERT INTO todos (task) VALUES (%s);", (new_todo,))
             conn.commit()
         conn.close()
-        logging.info("Todo added successfully: %s", new_todo)
+        logging.info("New todo added successfully: %s", new_todo)
         return jsonify({"message": "Todo added successfully"}), 201
     logging.error("Invalid todo data received: %s", new_todo)
     return jsonify({"error": "Invalid todo"}), 400
