@@ -68,9 +68,7 @@ jobs:
       - name: Deploy to GKE
         run: |
           cd project/manifests
-          kustomize edit set image jannekarki/todo-app=$DOCKER_HUB_USERNAME/$IMAGE:latest
-          kustomize edit set image jannekarki/todo-backend=$DOCKER_HUB_USERNAME/$BACKEND_IMAGE:latest
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment todo-app-dep -n project-namespace
-          kubectl rollout status deployment todo-backend-dep -n project-namespace
-          kubectl get services -o wide
+          kubectl rollout restart deployment todo-app-dep -n project-namespace
+          kubectl rollout restart deployment todo-backend-dep -n project-namespace
+          kubectl get pods -n project-namespace
