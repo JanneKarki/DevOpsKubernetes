@@ -27,10 +27,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://github.com/getsops/sops/releases/latest/download/sops-linux-amd64 -O sops
+          wget "https://github.com/getsops/sops/releases/download/v3.9.4/sops-v3.9.4.linux.amd64" -O sops
           chmod +x sops
           sudo mv sops /usr/local/bin/
           sops --version
+
 
 
       - name: Configure SOPS
