@@ -26,7 +26,7 @@ def check_image_update():
 
 @app.route('/', methods=['GET'])
 def home():
-    return "Todo App running", 200
+    return "Todo App running!", 200
 
 @app.route('/todo', methods=['GET', 'POST'])
 def todo():
