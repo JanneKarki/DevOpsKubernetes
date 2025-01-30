@@ -10,13 +10,13 @@ resources:
   - backend_manifests/ingress.yaml
   - backend_manifests/postgres_service.yaml
   - backend_manifests/postgres_statefulset.yaml
-  - backend_manifests/secrets/secrets.yaml
   - backend_manifests/configmap.yaml
+  - backend_manifests/secrets.yaml
 
 images:
   - name: jannekarki/todo-backend
     newName: jannekarki/todo-backend
-    newTag: "latest"
+    newTag: latest
   - name: jannekarki/todo-app
     newName: jannekarki/todo-app
-    newTag: "1.4"
+    newTag: latest
