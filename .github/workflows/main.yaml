@@ -42,7 +42,7 @@ jobs:
 
       - name: Decrypt secrets
         run: |
-          sops --decrypt project/manifests/backend_manifests/secrets.enc.yaml > project/manifests/backend_manifests/secrets.yaml
+          sops --decrypt project/manifests/backend_manifests/secret.enc.yaml > project/manifests/backend_manifests/secrets.yaml
 
 
       # Docker Hub login
