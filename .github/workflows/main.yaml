@@ -112,3 +112,7 @@ jobs:
           kubectl rollout restart deployment todo-app-dep -n $NAMESPACE
           kubectl rollout restart deployment todo-backend-dep -n $NAMESPACE
           kubectl get services -o wide -n $NAMESPACE
+<<<<<<< HEAD
+=======
+ 
+>>>>>>> part-3
